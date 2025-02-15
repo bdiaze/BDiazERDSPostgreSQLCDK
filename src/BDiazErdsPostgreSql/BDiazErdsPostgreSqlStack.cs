@@ -1,6 +1,7 @@
 using Amazon.CDK;
 using Amazon.CDK.AWS.EC2;
 using Amazon.CDK.AWS.IAM;
+using Amazon.CDK.AWS.Logs;
 using Amazon.CDK.AWS.RDS;
 using Constructs;
 using InstanceType = Amazon.CDK.AWS.EC2.InstanceType;
@@ -81,6 +82,8 @@ namespace BDiazErdsPostgreSql
                 PerformanceInsightRetention = PerformanceInsightRetention.DEFAULT,
                 MonitoringInterval = Duration.Minutes(1),
                 MonitoringRole = role,
+                CloudwatchLogsExports = ["postgresql"],
+                CloudwatchLogsRetention = RetentionDays.ONE_MONTH,
             });
         }
     }
