@@ -8,9 +8,9 @@ using InstanceType = Amazon.CDK.AWS.EC2.InstanceType;
 
 namespace BDiazErdsPostgreSql
 {
-    public class BDiazErdsPostgreSqlStack : Stack
+    public class BDiazERDSPostgreSqlStack : Stack
     {
-        internal BDiazErdsPostgreSqlStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
+        internal BDiazERDSPostgreSqlStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
         {
             string appName = System.Environment.GetEnvironmentVariable("APP_NAME")!;
             string vpcId = System.Environment.GetEnvironmentVariable("VPC_ID")!;
@@ -30,7 +30,7 @@ namespace BDiazErdsPostgreSql
 
             ISubnetGroup subnetGroup = new SubnetGroup(this, $"{appName}SubnetGroup", new SubnetGroupProps {
                 SubnetGroupName = $"{appName}PrivateSubnetGroup",
-                Description = "Private Subnet Group - BDiazE",
+                Description = $"Private Subnet Group - {appName}",
                 Vpc = vpc,
                 VpcSubnets = new SubnetSelection {
                     Subnets = [subnet1, subnet2]
@@ -40,7 +40,7 @@ namespace BDiazErdsPostgreSql
             ISecurityGroup securityGroup = new SecurityGroup(this, $"{appName}RDSSecurityGroup", new SecurityGroupProps {
                 Vpc = vpc,
                 SecurityGroupName = $"{appName}RDSSecurityGroup",
-                Description = "RDS Security Group - BDiazE",
+                Description = $"RDS Security Group - {appName}",
                 AllowAllOutbound = true
             });
 

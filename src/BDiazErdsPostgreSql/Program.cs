@@ -14,7 +14,7 @@ namespace BDiazErdsPostgreSql
             string region = System.Environment.GetEnvironmentVariable("REGION_AWS")!;
 
             var app = new App();
-            new BDiazErdsPostgreSqlStack(app, $"Cdk{appName}RDSPostgreSQL", new StackProps
+            new BDiazERDSPostgreSqlStack(app, $"Cdk{appName}RDSPostgreSQL", new StackProps
             {
                 // If you don't specify 'env', this stack will be environment-agnostic.
                 // Account/Region-dependent features and context lookups will not work,
