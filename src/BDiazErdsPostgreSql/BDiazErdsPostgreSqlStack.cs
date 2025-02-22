@@ -103,7 +103,7 @@ namespace BDiazErdsPostgreSql
             // Se crea parámetro con información de conexión a la base de datos...
             _ = new Secret(this, $"{appName}RDSPostgreSQLSecret", new SecretProps { 
                 SecretName = $"/{appName}/RDSPostgreSQL/ConnectionString",
-                Description = $"Connection String de la base de datos RDS PostgreSQL de la aplicación {appName}",
+                Description = $"Connection String de la base de datos RDS PostgreSQL de la aplicacion {appName}",
                 SecretObjectValue = new Dictionary<string, SecretValue> {
                     { "Host", SecretValue.UnsafePlainText(instance.DbInstanceEndpointAddress) },
                     { "Port", SecretValue.UnsafePlainText(instance.DbInstanceEndpointPort) },
