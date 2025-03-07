@@ -28,12 +28,16 @@ jobs:
             EC2_SECURITY_GROUP_ID: ${{ vars.EC2_SECURITY_GROUP_ID }}
             SUBAPP_01_NAME: ${{ vars.SUBAPP_01_NAME }}
             SUBAPP_01_DATABASE: ${{ secrets.SUBAPP_01_DATABASE }}
-            SUBAPP_01_USERNAME: ${{ secrets.SUBAPP_01_USERNAME }}
-            SUBAPP_01_PASSWORD: ${{ secrets.SUBAPP_01_PASSWORD }}
+            SUBAPP_01_ADM_USERNAME: ${{ secrets.SUBAPP_01_ADM_USERNAME }}
+            SUBAPP_01_ADM_PASSWORD: ${{ secrets.SUBAPP_01_ADM_PASSWORD }}
+            SUBAPP_01_APP_USERNAME: ${{ secrets.SUBAPP_01_APP_USERNAME }}
+            SUBAPP_01_APP_PASSWORD: ${{ secrets.SUBAPP_01_APP_PASSWORD }}
             SUBAPP_02_NAME: ${{ vars.SUBAPP_02_NAME }}
             SUBAPP_02_DATABASE: ${{ secrets.SUBAPP_02_DATABASE }}
-            SUBAPP_02_USERNAME: ${{ secrets.SUBAPP_02_USERNAME }}
-            SUBAPP_02_PASSWORD: ${{ secrets.SUBAPP_02_PASSWORD }}
+            SUBAPP_02_ADM_USERNAME: ${{ secrets.SUBAPP_02_ADM_USERNAME }}
+            SUBAPP_02_ADM_PASSWORD: ${{ secrets.SUBAPP_02_ADM_PASSWORD }}
+            SUBAPP_02_APP_USERNAME: ${{ secrets.SUBAPP_02_APP_USERNAME }}
+            SUBAPP_02_APP_PASSWORD: ${{ secrets.SUBAPP_02_APP_PASSWORD }}
         steps:
             - name: Checkout Repositorio
               uses: actions/checkout@v4

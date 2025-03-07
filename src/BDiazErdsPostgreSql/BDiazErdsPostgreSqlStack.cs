@@ -26,13 +26,17 @@ namespace BDiazErdsPostgreSql
             // Se obtienen passwords de las otras aplicaciones para almacenar en el mismo secret...
             string subapp01Name = System.Environment.GetEnvironmentVariable("SUBAPP_01_NAME")!;
             string subapp01Database = System.Environment.GetEnvironmentVariable("SUBAPP_01_DATABASE")!;
-            string subapp01Username = System.Environment.GetEnvironmentVariable("SUBAPP_01_USERNAME")!;
-            string subapp01Password = System.Environment.GetEnvironmentVariable("SUBAPP_01_PASSWORD")!;
+            string subapp01AdmUsername = System.Environment.GetEnvironmentVariable("SUBAPP_01_ADM_USERNAME")!;
+            string subapp01AdmPassword = System.Environment.GetEnvironmentVariable("SUBAPP_01_ADM_PASSWORD")!;
+            string subapp01AppUsername = System.Environment.GetEnvironmentVariable("SUBAPP_01_APP_USERNAME")!;
+            string subapp01AppPassword = System.Environment.GetEnvironmentVariable("SUBAPP_01_APP_PASSWORD")!;
 
             string subapp02Name = System.Environment.GetEnvironmentVariable("SUBAPP_02_NAME")!;
             string subapp02Database = System.Environment.GetEnvironmentVariable("SUBAPP_02_DATABASE")!;
-            string subapp02Username = System.Environment.GetEnvironmentVariable("SUBAPP_02_USERNAME")!;
-            string subapp02Password = System.Environment.GetEnvironmentVariable("SUBAPP_02_PASSWORD")!;
+            string subapp02AdmUsername = System.Environment.GetEnvironmentVariable("SUBAPP_02_ADM_USERNAME")!;
+            string subapp02AdmPassword = System.Environment.GetEnvironmentVariable("SUBAPP_02_ADM_PASSWORD")!;
+            string subapp02AppUsername = System.Environment.GetEnvironmentVariable("SUBAPP_02_APP_USERNAME")!;
+            string subapp02AppPassword = System.Environment.GetEnvironmentVariable("SUBAPP_02_APP_PASSWORD")!;
 
             IVpc vpc = Vpc.FromLookup(this, $"{appName}Vpc", new VpcLookupOptions {
                 VpcId = vpcId
@@ -50,7 +54,7 @@ namespace BDiazErdsPostgreSql
                 }
             });
 
-            ISecurityGroup securityGroup = new SecurityGroup(this, $"{appName}RDSSecurityGroup", new SecurityGroupProps {
+            SecurityGroup securityGroup = new(this, $"{appName}RDSSecurityGroup", new SecurityGroupProps {
                 Vpc = vpc,
                 SecurityGroupName = $"{appName}RDSSecurityGroup",
                 Description = $"RDS Security Group - {appName}",
@@ -111,11 +115,15 @@ namespace BDiazErdsPostgreSql
                     { "MasterPassword", SecretValue.UnsafePlainText(masterPassword) },
                     // Se añaden las passwords de las subapps...
                     { $"{subapp01Name}Database", SecretValue.UnsafePlainText(subapp01Database) },
-                    { $"{subapp01Name}Username", SecretValue.UnsafePlainText(subapp01Username) },
-                    { $"{subapp01Name}Password", SecretValue.UnsafePlainText(subapp01Password) },
+                    { $"{subapp01Name}AdmUsername", SecretValue.UnsafePlainText(subapp01AdmUsername) },
+                    { $"{subapp01Name}AdmPassword", SecretValue.UnsafePlainText(subapp01AdmPassword) },
+                    { $"{subapp01Name}AppUsername", SecretValue.UnsafePlainText(subapp01AppUsername) },
+                    { $"{subapp01Name}AppPassword", SecretValue.UnsafePlainText(subapp01AppPassword) },
                     { $"{subapp02Name}Database", SecretValue.UnsafePlainText(subapp02Database) },
-                    { $"{subapp02Name}Username", SecretValue.UnsafePlainText(subapp02Username) },
-                    { $"{subapp02Name}Password", SecretValue.UnsafePlainText(subapp02Password) },
+                    { $"{subapp02Name}AdmUsername", SecretValue.UnsafePlainText(subapp02AdmUsername) },
+                    { $"{subapp02Name}AdmPassword", SecretValue.UnsafePlainText(subapp02AdmPassword) },
+                    { $"{subapp02Name}AppUsername", SecretValue.UnsafePlainText(subapp02AppUsername) },
+                    { $"{subapp02Name}AppPassword", SecretValue.UnsafePlainText(subapp02AppPassword) },
                 },
              });
         }
