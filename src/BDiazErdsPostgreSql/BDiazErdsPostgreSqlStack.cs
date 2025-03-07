@@ -173,7 +173,7 @@ namespace BDiazErdsPostgreSql
             SecurityGroup securityGroupLambda = new(this, $"{appName}InitialCreationLambdaSecurityGroup", new SecurityGroupProps {
                 Vpc = vpc,
                 SecurityGroupName = $"{appName}RDSPostgreSQLInitialCreationLambdaSecurityGroup",
-                Description = $"Security Group para Lambda de creación inicial {appName} RDS PostgreSQL",
+                Description = $"Security Group para Lambda de creacion inicial {appName} RDS PostgreSQL",
                 AllowAllOutbound = true
             });
             securityGroup.AddIngressRule(Peer.SecurityGroupId(securityGroupLambda.SecurityGroupId), Port.POSTGRES, $"Ingress para función lambda de creación inicial {appName} RDS PostgreSQL");
