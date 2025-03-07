@@ -1,6 +1,7 @@
 using Amazon.CDK;
 using Amazon.CDK.AWS.EC2;
 using Amazon.CDK.AWS.IAM;
+using Amazon.CDK.AWS.Lambda;
 using Amazon.CDK.AWS.Logs;
 using Amazon.CDK.AWS.RDS;
 using Amazon.CDK.AWS.SecretsManager;
@@ -37,6 +38,10 @@ namespace BDiazErdsPostgreSql
             string subapp02AdmPassword = System.Environment.GetEnvironmentVariable("SUBAPP_02_ADM_PASSWORD")!;
             string subapp02AppUsername = System.Environment.GetEnvironmentVariable("SUBAPP_02_APP_USERNAME")!;
             string subapp02AppPassword = System.Environment.GetEnvironmentVariable("SUBAPP_02_APP_PASSWORD")!;
+
+            // Se obtienen variables de entorno para la creación de la lambda de ejecución inicial...
+            string initialCreationHandler = System.Environment.GetEnvironmentVariable("INITIAL_CREATION_HANDLER")!;
+            string initialCreationPublishZip = System.Environment.GetEnvironmentVariable("INITIAL_CREATION_PUBLISH_ZIP")!;
 
             IVpc vpc = Vpc.FromLookup(this, $"{appName}Vpc", new VpcLookupOptions {
                 VpcId = vpcId
@@ -105,7 +110,7 @@ namespace BDiazErdsPostgreSql
             });
 
             // Se crea parámetro con información de conexión a la base de datos...
-            _ = new Secret(this, $"{appName}RDSPostgreSQLSecret", new SecretProps { 
+            Secret secret = new(this, $"{appName}RDSPostgreSQLSecret", new SecretProps { 
                 SecretName = $"/{appName}/RDSPostgreSQL/ConnectionString",
                 Description = $"Connection String de la base de datos RDS PostgreSQL de la aplicacion {appName}",
                 SecretObjectValue = new Dictionary<string, SecretValue> {
@@ -125,7 +130,74 @@ namespace BDiazErdsPostgreSql
                     { $"{subapp02Name}AppUsername", SecretValue.UnsafePlainText(subapp02AppUsername) },
                     { $"{subapp02Name}AppPassword", SecretValue.UnsafePlainText(subapp02AppPassword) },
                 },
-             });
+            });
+
+            // Se crea función lambda que ejecute scripts para la creación de las bases de datos, usuarios y permisos...
+            // Primero creación de log group lambda...
+            LogGroup logGroupLambda = new(this, $"{appName}InitialCreationLambdaLogGroup", new LogGroupProps {
+                LogGroupName = $"/aws/lambda/{instance.InstanceIdentifier}InitialCreationLambda/logs",
+                Retention = RetentionDays.ONE_MONTH,
+                RemovalPolicy = RemovalPolicy.DESTROY
+            });
+
+            // Luego la creación del rol para la función lambda...
+            IRole roleLambda = new Role(this, $"{appName}InitialCreationLambdaRole", new RoleProps {
+                RoleName = $"{instance.InstanceIdentifier}InitialCreationLambdaRole",
+                Description = $"Role para Lambda de creacion inicial {instance.InstanceIdentifier}",
+                AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
+                ManagedPolicies = [
+                    ManagedPolicy.FromAwsManagedPolicyName("service-role/AWSLambdaVPCAccessExecutionRole"),
+                    ManagedPolicy.FromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
+                ],
+                InlinePolicies = new Dictionary<string, PolicyDocument> {
+                    {
+                        $"{instance.InstanceIdentifier}InitialCreationLambdaPolicy",
+                        new PolicyDocument(new PolicyDocumentProps {
+                            Statements = [
+                                new PolicyStatement(new PolicyStatementProps{
+                                    Sid = $"{appName}AccessToSecretManager",
+                                    Actions = [
+                                        "secretsmanager:GetSecretValue"
+                                    ],
+                                    Resources = [
+                                        secret.SecretFullArn,
+                                    ],
+                                })
+                            ]
+                        })
+                    }
+                }
+            });
+
+            // Y el security group...
+            SecurityGroup securityGroupLambda = new(this, $"{appName}InitialCreationLambdaSecurityGroup", new SecurityGroupProps {
+                Vpc = vpc,
+                SecurityGroupName = $"{instance.InstanceIdentifier}InitialCreationLambdaSecurityGroup",
+                Description = $"Security Group para Lambda de creación inicial {instance.InstanceIdentifier}",
+                AllowAllOutbound = true
+            });
+            securityGroup.AddIngressRule(Peer.SecurityGroupId(securityGroupLambda.SecurityGroupId), Port.POSTGRES, $"Ingress para función lambda de creación inicial {instance.InstanceIdentifier}");
+
+            // Creación de la función lambda...
+            Function function = new(this, $"{appName}InitialCreationLambda", new FunctionProps {
+                Runtime = Runtime.DOTNET_8,
+                Handler = initialCreationHandler,
+                Code = Code.FromAsset(initialCreationPublishZip),
+                FunctionName = $"{instance.InstanceIdentifier}InitialCreationLambda",
+                Timeout = Duration.Seconds(15 * 60),
+                MemorySize = 256,
+                Architecture = Architecture.ARM_64,
+                LogGroup = logGroupLambda,
+                Environment = new Dictionary<string, string> {
+                    { "SECRET_ARN_CONNECTION_STRING", secret.SecretFullArn },
+                },
+                Vpc = vpc,
+                VpcSubnets = new SubnetSelection {
+                    Subnets = [subnet1, subnet2]
+                },
+                SecurityGroups = [securityGroupLambda],
+                Role = roleLambda,
+            });
         }
     }
 }
