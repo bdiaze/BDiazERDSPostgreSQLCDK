@@ -134,16 +134,16 @@ namespace BDiazErdsPostgreSql
 
             // Se crea función lambda que ejecute scripts para la creación de las bases de datos, usuarios y permisos...
             // Primero creación de log group lambda...
-            LogGroup logGroupLambda = new(this, $"{appName}InitialCreationLambdaLogGroup", new LogGroupProps {
-                LogGroupName = $"/aws/lambda/{instance.InstanceIdentifier}InitialCreationLambda/logs",
+            LogGroup logGroupLambda = new(this, $"{appName}RDSPostgreSQLInitialCreationLambdaLogGroup", new LogGroupProps {
+                LogGroupName = $"/aws/lambda/{appName}RDSPostgreSQLInitialCreationLambda/logs",
                 Retention = RetentionDays.ONE_MONTH,
                 RemovalPolicy = RemovalPolicy.DESTROY
             });
 
             // Luego la creación del rol para la función lambda...
-            IRole roleLambda = new Role(this, $"{appName}InitialCreationLambdaRole", new RoleProps {
-                RoleName = $"{instance.InstanceIdentifier}InitialCreationLambdaRole",
-                Description = $"Role para Lambda de creacion inicial {instance.InstanceIdentifier}",
+            IRole roleLambda = new Role(this, $"{appName}RDSPostgreSQLInitialCreationLambdaRole", new RoleProps {
+                RoleName = $"{appName}RDSPostgreSQLInitialCreationLambdaRole",
+                Description = $"Role para Lambda de creacion inicial {appName} RDS PostgreSQL",
                 AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
                 ManagedPolicies = [
                     ManagedPolicy.FromAwsManagedPolicyName("service-role/AWSLambdaVPCAccessExecutionRole"),
@@ -151,7 +151,7 @@ namespace BDiazErdsPostgreSql
                 ],
                 InlinePolicies = new Dictionary<string, PolicyDocument> {
                     {
-                        $"{instance.InstanceIdentifier}InitialCreationLambdaPolicy",
+                        $"{appName}RDSPostgreSQLInitialCreationLambdaPolicy",
                         new PolicyDocument(new PolicyDocumentProps {
                             Statements = [
                                 new PolicyStatement(new PolicyStatementProps{
@@ -172,18 +172,18 @@ namespace BDiazErdsPostgreSql
             // Y el security group...
             SecurityGroup securityGroupLambda = new(this, $"{appName}InitialCreationLambdaSecurityGroup", new SecurityGroupProps {
                 Vpc = vpc,
-                SecurityGroupName = $"{instance.InstanceIdentifier}InitialCreationLambdaSecurityGroup",
-                Description = $"Security Group para Lambda de creación inicial {instance.InstanceIdentifier}",
+                SecurityGroupName = $"{appName}RDSPostgreSQLInitialCreationLambdaSecurityGroup",
+                Description = $"Security Group para Lambda de creación inicial {appName} RDS PostgreSQL",
                 AllowAllOutbound = true
             });
-            securityGroup.AddIngressRule(Peer.SecurityGroupId(securityGroupLambda.SecurityGroupId), Port.POSTGRES, $"Ingress para función lambda de creación inicial {instance.InstanceIdentifier}");
+            securityGroup.AddIngressRule(Peer.SecurityGroupId(securityGroupLambda.SecurityGroupId), Port.POSTGRES, $"Ingress para función lambda de creación inicial {appName} RDS PostgreSQL");
 
             // Creación de la función lambda...
             Function function = new(this, $"{appName}InitialCreationLambda", new FunctionProps {
                 Runtime = Runtime.DOTNET_8,
                 Handler = initialCreationHandler,
                 Code = Code.FromAsset(initialCreationPublishZip),
-                FunctionName = $"{instance.InstanceIdentifier}InitialCreationLambda",
+                FunctionName = $"{appName}RDSPostgreSQLInitialCreationLambda",
                 Timeout = Duration.Seconds(15 * 60),
                 MemorySize = 256,
                 Architecture = Architecture.ARM_64,
