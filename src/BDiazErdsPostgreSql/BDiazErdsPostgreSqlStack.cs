@@ -190,6 +190,8 @@ namespace BDiazErdsPostgreSql
                 LogGroup = logGroupLambda,
                 Environment = new Dictionary<string, string> {
                     { "SECRET_ARN_CONNECTION_STRING", secret.SecretFullArn },
+                    { "SUBAPP_01_NAME", subapp01Name },
+                    { "SUBAPP_02_NAME", subapp02Name },
                 },
                 Vpc = vpc,
                 VpcSubnets = new SubnetSelection {
