@@ -38,6 +38,8 @@ jobs:
             SUBAPP_02_ADM_PASSWORD: ${{ secrets.SUBAPP_02_ADM_PASSWORD }}
             SUBAPP_02_APP_USERNAME: ${{ secrets.SUBAPP_02_APP_USERNAME }}
             SUBAPP_02_APP_PASSWORD: ${{ secrets.SUBAPP_02_APP_PASSWORD }}
+            PRIVATE_WITH_INTERNET_ID_1: ${{ vars.PRIVATE_WITH_INTERNET_ID_1 }}
+            PRIVATE_WITH_INTERNET_ID_2: ${{ vars.PRIVATE_WITH_INTERNET_ID_2 }}
             INITIAL_CREATION_HANDLER: ${{ vars.INITIAL_CREATION_HANDLER }}
             INITIAL_CREATION_PUBLISH_ZIP: ${{ vars.INITIAL_CREATION_PUBLISH_ZIP }}
         steps:
@@ -59,7 +61,7 @@ jobs:
                   
             - name: Publish .NET Lambda
               working-directory: ${{ vars.INITIAL_CREATION_DIRECTORY }}
-              run: dotnet publish -o ./publish --runtime linux-arm64
+              run: dotnet publish --property:PublishDir=./publish --runtime linux-arm64
               
             - name: Compress Publish Directory
               working-directory: ${{ vars.INITIAL_CREATION_DIRECTORY }}/publish

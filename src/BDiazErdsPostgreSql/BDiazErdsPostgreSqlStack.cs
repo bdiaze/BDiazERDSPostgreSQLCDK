@@ -40,6 +40,8 @@ namespace BDiazErdsPostgreSql
             string subapp02AppPassword = System.Environment.GetEnvironmentVariable("SUBAPP_02_APP_PASSWORD")!;
 
             // Se obtienen variables de entorno para la creación de la lambda de ejecución inicial...
+            string privateWithInternetId1 = System.Environment.GetEnvironmentVariable("PRIVATE_WITH_INTERNET_ID_1")!;
+            string privateWithInternetId2 = System.Environment.GetEnvironmentVariable("PRIVATE_WITH_INTERNET_ID_2")!;
             string initialCreationHandler = System.Environment.GetEnvironmentVariable("INITIAL_CREATION_HANDLER")!;
             string initialCreationPublishZip = System.Environment.GetEnvironmentVariable("INITIAL_CREATION_PUBLISH_ZIP")!;
 
@@ -179,6 +181,8 @@ namespace BDiazErdsPostgreSql
             securityGroup.AddIngressRule(Peer.SecurityGroupId(securityGroupLambda.SecurityGroupId), Port.POSTGRES, $"Ingress para funcion lambda de creacion inicial {appName} RDS PostgreSQL");
 
             // Creación de la función lambda...
+            ISubnet privateWithInternet1 = Subnet.FromSubnetId(this, $"{appName}PrivateSubnetWithInternet1", privateWithInternetId1);
+            ISubnet privateWithInternet2 = Subnet.FromSubnetId(this, $"{appName}PrivateSubnetWithInternet2", privateWithInternetId2);
             Function function = new(this, $"{appName}InitialCreationLambda", new FunctionProps {
                 Runtime = Runtime.DOTNET_8,
                 Handler = initialCreationHandler,
@@ -195,7 +199,7 @@ namespace BDiazErdsPostgreSql
                 },
                 Vpc = vpc,
                 VpcSubnets = new SubnetSelection {
-                    Subnets = [subnet1, subnet2]
+                    Subnets = [privateWithInternet1, privateWithInternet2]
                 },
                 SecurityGroups = [securityGroupLambda],
                 Role = roleLambda,
