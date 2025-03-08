@@ -19,6 +19,7 @@ namespace BDiazErdsPostgreSql
             string vpcId = System.Environment.GetEnvironmentVariable("VPC_ID")!;
             string subnetId1 = System.Environment.GetEnvironmentVariable("SUBNET_ID_1")!;
             string subnetId2 = System.Environment.GetEnvironmentVariable("SUBNET_ID_2")!;
+            string defaultDatabase = System.Environment.GetEnvironmentVariable("DEFAULT_DATABASE")!;
             string masterUsername = System.Environment.GetEnvironmentVariable("MASTER_USERNAME")!;
             string masterPassword = System.Environment.GetEnvironmentVariable("MASTER_PASSWORD")!;
             string lambdaSecurityGroupId = System.Environment.GetEnvironmentVariable("LAMBDA_SECURITY_GROUP_ID")!;
@@ -118,6 +119,7 @@ namespace BDiazErdsPostgreSql
                 SecretObjectValue = new Dictionary<string, SecretValue> {
                     { "Host", SecretValue.UnsafePlainText(instance.DbInstanceEndpointAddress) },
                     { "Port", SecretValue.UnsafePlainText(instance.DbInstanceEndpointPort) },
+                    { "DefaultDatabase", SecretValue.UnsafePlainText(defaultDatabase) },
                     { "MasterUser", SecretValue.UnsafePlainText(masterUsername) },
                     { "MasterPassword", SecretValue.UnsafePlainText(masterPassword) },
                     // Se añaden las passwords de las subapps...

@@ -22,6 +22,7 @@ jobs:
             VPC_ID: ${{ vars.VPC_ID }}
             SUBNET_ID_1: ${{ vars.SUBNET_ID_1 }}
             SUBNET_ID_2: ${{ vars.SUBNET_ID_2 }}
+            DEFAULT_DATABASE: ${{ vars.DEFAULT_DATABASE }}
             MASTER_USERNAME: ${{ secrets.MASTER_USERNAME }}
             MASTER_PASSWORD: ${{ secrets.MASTER_PASSWORD }}
             LAMBDA_SECURITY_GROUP_ID: ${{ vars.LAMBDA_SECURITY_GROUP_ID }}

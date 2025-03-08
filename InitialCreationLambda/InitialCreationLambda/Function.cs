@@ -27,7 +27,7 @@ public class Function {
 
         using (NpgsqlConnection conn = new(
             $"Server={connectionString.Host};Port={connectionString.Port};SslMode=prefer;" +
-            $"User Id={connectionString.MasterUser}; Password='{connectionString.MasterPassword}';")) {
+            $"Database={connectionString.DefaultDatabase};User Id={connectionString.MasterUser}; Password='{connectionString.MasterPassword}';")) {
 
             conn.Open();
 
