@@ -21,19 +21,19 @@ public class Function {
         string subapp01Name = Environment.GetEnvironmentVariable("SUBAPP_01_NAME") ?? throw new ArgumentNullException("SUBAPP_01_NAME");
         string subapp02Name = Environment.GetEnvironmentVariable("SUBAPP_02_NAME") ?? throw new ArgumentNullException("SUBAPP_02_NAME");
 
-        dynamic connectionString = SecretManager.ObtenerSecreto(secretArnConnectionString).Result;
+        Dictionary<string, string> connectionString = SecretManager.ObtenerSecreto(secretArnConnectionString).Result;
 
         List<string> retorno = [];
 
         using (NpgsqlConnection conn = new(
-            $"Server={connectionString.Host};Port={connectionString.Port};SslMode=prefer;" +
-            $"Database={connectionString.DefaultDatabase};User Id={connectionString.MasterUser}; Password='{connectionString.MasterPassword}';")) {
+            $"Server={connectionString["Host"]};Port={connectionString["Port"]};SslMode=prefer;" +
+            $"Database={connectionString["DefaultDatabase"]};User Id={connectionString["MasterUser"]}; Password='{connectionString["MasterPassword"]}';")) {
 
             conn.Open();
 
             // Se crea usuario administrador subapp02...
-            string subapp02AdmUsername = connectionString.GetType().GetProperty($"{subapp02Name}AdmUsername").GetValue(connectionString, null);
-            string subapp02AdmPassword = connectionString.GetType().GetProperty($"{subapp02Name}AdmPassword").GetValue(connectionString, null);
+            string subapp02AdmUsername = connectionString[$"{subapp02Name}AdmUsername"];
+            string subapp02AdmPassword = connectionString[$"{subapp02Name}AdmPassword"];
             try {
                 using NpgsqlCommand cmd = new($"CREATE USER \"{subapp02AdmUsername}\" WITH ENCRYPTED PASSWORD '{subapp02AdmPassword}'", conn);
                 cmd.ExecuteNonQuery();
@@ -43,7 +43,7 @@ public class Function {
             }
 
             // Se crea database subapp02...
-            string subapp02Database = connectionString.GetType().GetProperty($"{subapp02Name}Database").GetValue(connectionString, null);
+            string subapp02Database = connectionString[$"{subapp02Name}Database"];
             try {
                 using NpgsqlCommand cmd = new($"CREATE DATABASE \"{subapp02Database}\" OWNER \"{subapp02AdmUsername}\"", conn);
                 cmd.ExecuteNonQuery();

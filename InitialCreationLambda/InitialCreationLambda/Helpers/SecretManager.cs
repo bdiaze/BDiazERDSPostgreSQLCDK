@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace MateoAPI.Helpers {
     public class SecretManager {
-        public static async Task<dynamic> ObtenerSecreto(string secretArn) {
+        public static async Task<Dictionary<string, string>> ObtenerSecreto(string secretArn) {
             IAmazonSecretsManager client = new AmazonSecretsManagerClient();
             GetSecretValueResponse response = await client.GetSecretValueAsync(new GetSecretValueRequest { 
                 SecretId = secretArn
@@ -14,7 +14,7 @@ namespace MateoAPI.Helpers {
                 throw new Exception("No se pudo rescatar correctamente el secreto");
             }
 
-            return JsonConvert.DeserializeObject(response.SecretString)!;
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(response.SecretString)!;
         }
     }
 }
