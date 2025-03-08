@@ -46,7 +46,7 @@ public class Function {
             string subapp02AdmUsername = connectionString[$"{subapp02Name}AdmUsername"];
             string subapp02AdmPassword = connectionString[$"{subapp02Name}AdmPassword"];
             try {
-                using NpgsqlCommand cmd = new($"CREATE USER \"{subapp02AdmUsername}\" WITH ENCRYPTED PASSWORD '{subapp02AdmPassword}'", conn);
+                using NpgsqlCommand cmd = new($"CREATE USER \"{subapp02AdmUsername}\" WITH ENCRYPTED PASSWORD '{subapp02AdmPassword}' CREATEROLE", conn);
                 cmd.ExecuteNonQuery();
             } catch (Exception ex) {
                 string mensaje = "Error al crear usuario administrador de la subapp02: " + ex;
@@ -56,7 +56,7 @@ public class Function {
 
             // Se otorgan permisos al nuevo usuario administrador subapp02 sobre la base creada...
             try {
-                using NpgsqlCommand cmd = new($"GRANT ALL PRIVILEGES ON DATABASE \"{subapp02Database}\" TO \"{subapp02AdmUsername}\"", conn);
+                using NpgsqlCommand cmd = new($"GRANT ALL PRIVILEGES ON DATABASE \"{subapp02Database}\" TO \"{subapp02AdmUsername}\" WITH GRANT OPTION", conn);
                 cmd.ExecuteNonQuery();
             } catch (Exception ex) {
                 string mensaje = "Error al otorgar permisos al usuario administrador de la subapp02: " + ex;

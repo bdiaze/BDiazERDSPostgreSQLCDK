@@ -190,7 +190,7 @@ namespace BDiazErdsPostgreSql
                 Handler = initialCreationHandler,
                 Code = Code.FromAsset(initialCreationPublishZip),
                 FunctionName = $"{appName}RDSPostgreSQLInitialCreationLambda",
-                Timeout = Duration.Seconds(15 * 60),
+                Timeout = Duration.Seconds(2 * 60),
                 MemorySize = 256,
                 Architecture = Architecture.ARM_64,
                 LogGroup = logGroupLambda,
