@@ -5,8 +5,9 @@ using Amazon.CDK.AWS.Lambda;
 using Amazon.CDK.AWS.Logs;
 using Amazon.CDK.AWS.RDS;
 using Amazon.CDK.AWS.SecretsManager;
-using Amazon.CDK.AWS.SSM;
+using Amazon.CDK.CustomResources;
 using Constructs;
+using System;
 using System.Collections.Generic;
 using InstanceType = Amazon.CDK.AWS.EC2.InstanceType;
 
@@ -205,6 +206,26 @@ namespace BDiazErdsPostgreSql
                 },
                 SecurityGroups = [securityGroupLambda],
                 Role = roleLambda,
+            });
+
+            // Se gatilla la lambda...
+            _ = new AwsCustomResource(this, $"{appName}InitialCreationTrigger", new AwsCustomResourceProps {
+                Policy = AwsCustomResourcePolicy.FromStatements([
+                    new PolicyStatement(new PolicyStatementProps{
+                        Actions = [ "lambda:InvokeFunction" ],
+                        Resources = [ function.FunctionArn ]
+                    })
+                ]),
+                Timeout = Duration.Seconds(2 * 60),
+                OnUpdate = new AwsSdkCall {
+                    Service = "Lambda",
+                    Action = "invoke",
+                    Parameters = new {
+                        function.FunctionName,
+                        InvocationType = "Event"
+                    },
+                    PhysicalResourceId = PhysicalResourceId.Of(DateTime.Now.ToString())
+                }
             });
         }
     }
