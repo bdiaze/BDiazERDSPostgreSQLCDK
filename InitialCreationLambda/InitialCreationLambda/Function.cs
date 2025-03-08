@@ -39,22 +39,6 @@ public class Function {
 
             conn.Open();
 
-            // Se crea database subapp02...
-            string subapp02Database = connectionString[$"{subapp02Name}Database"];
-            if (subapp02Database.Contains('"')) {
-                throw new Exception($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error con el nombre de la base de datos para subapp02 \"{subapp02Name}\" - Caracteres invalidos...");
-            }
-
-            LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Creando base de datos para subapp02 \"{subapp02Name}\" - [Base de Datos: {subapp02Database}]...");
-            try {
-                using NpgsqlCommand cmd = new($"CREATE DATABASE \"{subapp02Database}\"", conn);
-                cmd.ExecuteNonQuery();
-            } catch (Exception ex) {
-                string mensaje = $"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error al crear base de datos de la subapp02: " + ex;
-                LambdaLogger.Log(mensaje);
-                retorno.Add(mensaje);
-            }
-
             // Se crea usuario administrador subapp02...
             string subapp02AdmUsername = connectionString[$"{subapp02Name}AdmUsername"];
             if (subapp02AdmUsername.Contains('"')) {
@@ -75,13 +59,18 @@ public class Function {
                 retorno.Add(mensaje);
             }
 
-            // Se otorgan permisos al nuevo usuario administrador subapp02 sobre la base creada...
-            LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Otorgando permisos a usuario administrador para subapp02 \"{subapp02Name}\"...");
+            // Se crea database subapp02...
+            string subapp02Database = connectionString[$"{subapp02Name}Database"];
+            if (subapp02Database.Contains('"')) {
+                throw new Exception($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error con el nombre de la base de datos para subapp02 \"{subapp02Name}\" - Caracteres invalidos...");
+            }
+
+            LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Creando base de datos para subapp02 \"{subapp02Name}\" - [Base de Datos: {subapp02Database}]...");
             try {
-                using NpgsqlCommand cmd = new($"GRANT ALL PRIVILEGES ON DATABASE \"{subapp02Database}\" TO \"{subapp02AdmUsername}\" WITH GRANT OPTION", conn);
+                using NpgsqlCommand cmd = new($"CREATE DATABASE \"{subapp02Database}\" WITH OWNER \"{subapp02AdmUsername}\"", conn);
                 cmd.ExecuteNonQuery();
             } catch (Exception ex) {
-                string mensaje = $"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error al otorgar permisos al usuario administrador de la subapp02: " + ex;
+                string mensaje = $"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error al crear base de datos de la subapp02: " + ex;
                 LambdaLogger.Log(mensaje);
                 retorno.Add(mensaje);
             }
