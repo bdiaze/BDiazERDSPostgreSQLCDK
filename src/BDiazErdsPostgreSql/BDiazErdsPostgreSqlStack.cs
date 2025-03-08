@@ -220,9 +220,9 @@ namespace BDiazErdsPostgreSql
                 OnUpdate = new AwsSdkCall {
                     Service = "Lambda",
                     Action = "invoke",
-                    Parameters = new {
-                        function.FunctionName,
-                        InvocationType = "Event"
+                    Parameters = new Dictionary<string, object> {
+                        { "FunctionName", function.FunctionName },
+                        { "InvocationType", "Event" }
                     },
                     PhysicalResourceId = PhysicalResourceId.Of(DateTime.Now.ToString())
                 }
