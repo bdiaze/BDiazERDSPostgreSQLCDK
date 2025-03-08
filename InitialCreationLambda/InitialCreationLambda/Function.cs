@@ -19,13 +19,13 @@ public class Function {
     /// <returns></returns>
     public string FunctionHandler(string input, ILambdaContext context) {
         Stopwatch sw = Stopwatch.StartNew();
-        LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Iniciando proceso de creación inicial de la base de datos y sus usuarios administradores...");
+        LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Iniciando proceso de creacion inicial de la base de datos y sus usuarios administradores...");
 
         string secretArnConnectionString = Environment.GetEnvironmentVariable("SECRET_ARN_CONNECTION_STRING") ?? throw new ArgumentNullException("SECRET_ARN_CONNECTION_STRING");
         string subapp01Name = Environment.GetEnvironmentVariable("SUBAPP_01_NAME") ?? throw new ArgumentNullException("SUBAPP_01_NAME");
         string subapp02Name = Environment.GetEnvironmentVariable("SUBAPP_02_NAME") ?? throw new ArgumentNullException("SUBAPP_02_NAME");
 
-        LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Obteniendo secreto de conexión a base de datos...");
+        LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Obteniendo secreto de conexion a base de datos...");
 
         Dictionary<string, string> connectionString = SecretManager.ObtenerSecreto(secretArnConnectionString).Result;
 
@@ -76,7 +76,7 @@ public class Function {
             }
         }
 
-        LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Ha terminado el proceso de creación inicial de la base de datos y sus usuarios administradores...");
+        LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Ha terminado el proceso de creacion inicial de la base de datos y sus usuarios administradores...");
 
         return JsonConvert.SerializeObject(retorno);
     }
