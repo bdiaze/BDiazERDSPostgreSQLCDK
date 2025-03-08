@@ -41,6 +41,10 @@ public class Function {
 
             // Se crea database subapp02...
             string subapp02Database = connectionString[$"{subapp02Name}Database"];
+            if (subapp02Database.Contains('"')) {
+                throw new Exception($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error con el nombre de la base de datos para subapp02 \"{subapp02Name}\" - Caracteres invalidos...");
+            }
+
             LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Creando base de datos para subapp02 \"{subapp02Name}\" - [Base de Datos: {subapp02Database}]...");
             try {
                 using NpgsqlCommand cmd = new($"CREATE DATABASE \"{subapp02Database}\"", conn);
@@ -53,7 +57,14 @@ public class Function {
 
             // Se crea usuario administrador subapp02...
             string subapp02AdmUsername = connectionString[$"{subapp02Name}AdmUsername"];
+            if (subapp02AdmUsername.Contains('"')) {
+                throw new Exception($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error con el nombre de usuario administrador para subapp02 \"{subapp02Name}\" - Caracteres invalidos...");
+            }
             string subapp02AdmPassword = connectionString[$"{subapp02Name}AdmPassword"];
+            if (subapp02AdmPassword.Contains('\'')) {
+                throw new Exception($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error con la contraseña del usuario administrador para subapp02 \"{subapp02Name}\" - Caracteres invalidos...");
+            }
+
             LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Creando usuario administrador para subapp02 \"{subapp02Name}\"...");
             try {
                 using NpgsqlCommand cmd = new($"CREATE USER \"{subapp02AdmUsername}\" WITH ENCRYPTED PASSWORD '{subapp02AdmPassword}' CREATEROLE", conn);
