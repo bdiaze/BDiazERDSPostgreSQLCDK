@@ -61,7 +61,7 @@ jobs:
                   
             - name: Publish .NET Lambda
               working-directory: ${{ vars.INITIAL_CREATION_DIRECTORY }}
-              run: dotnet publish --property:PublishDir=./publish --runtime linux-arm64
+              run: dotnet publish --property:PublishDir=../publish --runtime linux-arm64
               
             - name: Compress Publish Directory
               working-directory: ${{ vars.INITIAL_CREATION_DIRECTORY }}/publish
