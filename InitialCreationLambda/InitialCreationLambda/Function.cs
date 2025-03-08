@@ -59,6 +59,17 @@ public class Function {
                 retorno.Add(mensaje);
             }
 
+            // Se otorga uso sobre el rol creado para el master user...
+            LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Otorgando uso del usuario administrador para subapp02 \"{subapp02Name}\"...");
+            try {
+                using NpgsqlCommand cmd2 = new($"GRANT \"{subapp02AdmUsername}\" TO \"{connectionString["MasterUser"]}\"", conn);
+                cmd2.ExecuteNonQuery();
+            } catch (Exception ex) {
+                string mensaje = $"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error al otorgar uso del usuario administrador de la subapp02: " + ex;
+                LambdaLogger.Log(mensaje);
+                retorno.Add(mensaje);
+            }
+
             // Se crea database subapp02...
             string subapp02Database = connectionString[$"{subapp02Name}Database"];
             if (subapp02Database.Contains('"')) {
