@@ -31,6 +31,17 @@ public class Function {
 
             conn.Open();
 
+            // Se crea database subapp02...
+            string subapp02Database = connectionString[$"{subapp02Name}Database"];
+            try {
+                using NpgsqlCommand cmd = new($"CREATE DATABASE \"{subapp02Database}\"", conn);
+                cmd.ExecuteNonQuery();
+            } catch (Exception ex) {
+                string mensaje = "Error al crear base de datos de la subapp02: " + ex;
+                LambdaLogger.Log(mensaje);
+                retorno.Add(mensaje);
+            }
+
             // Se crea usuario administrador subapp02...
             string subapp02AdmUsername = connectionString[$"{subapp02Name}AdmUsername"];
             string subapp02AdmPassword = connectionString[$"{subapp02Name}AdmPassword"];
@@ -38,18 +49,19 @@ public class Function {
                 using NpgsqlCommand cmd = new($"CREATE USER \"{subapp02AdmUsername}\" WITH ENCRYPTED PASSWORD '{subapp02AdmPassword}'", conn);
                 cmd.ExecuteNonQuery();
             } catch (Exception ex) {
-                LambdaLogger.Log("Error al crear usuario administrador de la subapp02: " + ex);
-                retorno.Add("Error al crear usuario administrador de la subapp02: " + ex);
+                string mensaje = "Error al crear usuario administrador de la subapp02: " + ex;
+                LambdaLogger.Log(mensaje);
+                retorno.Add(mensaje);
             }
 
-            // Se crea database subapp02...
-            string subapp02Database = connectionString[$"{subapp02Name}Database"];
+            // Se otorgan permisos al nuevo usuario administrador subapp02 sobre la base creada...
             try {
-                using NpgsqlCommand cmd = new($"CREATE DATABASE \"{subapp02Database}\" OWNER \"{subapp02AdmUsername}\"", conn);
+                using NpgsqlCommand cmd = new($"GRANT ALL PRIVILEGES ON DATABASE \"{subapp02Database}\" TO \"{subapp02AdmUsername}\"", conn);
                 cmd.ExecuteNonQuery();
             } catch (Exception ex) {
-                LambdaLogger.Log("Error al crear base de datos de la subapp02: " + ex);
-                retorno.Add("Error al crear base de datos de la subapp02: " + ex);
+                string mensaje = "Error al otorgar permisos al usuario administrador de la subapp02: " + ex;
+                LambdaLogger.Log(mensaje);
+                retorno.Add(mensaje);
             }
         }
 
