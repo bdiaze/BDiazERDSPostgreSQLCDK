@@ -223,7 +223,7 @@ namespace BDiazErdsPostgreSql
                     Parameters = new Dictionary<string, object> {
                         { "FunctionName", function.FunctionName },
                         { "InvocationType", "Event" },
-                        { "Payload", string.Empty }
+                        { "Payload", "" }
                     },
                     PhysicalResourceId = PhysicalResourceId.Of(DateTime.Now.ToString())
                 }
