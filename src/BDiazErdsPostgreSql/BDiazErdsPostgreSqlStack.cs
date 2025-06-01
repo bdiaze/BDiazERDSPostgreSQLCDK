@@ -137,6 +137,8 @@ namespace BDiazErdsPostgreSql
                 },
             });
 
+            #region Creación de Lambda para Ejecución Inicial de Scripts
+
             // Se crea función lambda que ejecute scripts para la creación de las bases de datos, usuarios y permisos...
             // Primero creación de log group lambda...
             LogGroup logGroupLambda = new(this, $"{appName}RDSPostgreSQLInitialCreationLambdaLogGroup", new LogGroupProps {
@@ -228,6 +230,8 @@ namespace BDiazErdsPostgreSql
                     PhysicalResourceId = PhysicalResourceId.Of(DateTime.Now.ToString())
                 }
             });
+
+            #endregion
         }
     }
 }
