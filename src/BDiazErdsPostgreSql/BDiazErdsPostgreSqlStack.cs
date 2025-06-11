@@ -23,8 +23,6 @@ namespace BDiazErdsPostgreSql
             string defaultDatabase = System.Environment.GetEnvironmentVariable("DEFAULT_DATABASE")!;
             string masterUsername = System.Environment.GetEnvironmentVariable("MASTER_USERNAME")!;
             string masterPassword = System.Environment.GetEnvironmentVariable("MASTER_PASSWORD")!;
-            string lambdaSecurityGroupId = System.Environment.GetEnvironmentVariable("LAMBDA_SECURITY_GROUP_ID")!;
-            string ec2SecurityGroupId = System.Environment.GetEnvironmentVariable("EC2_SECURITY_GROUP_ID")!;
 
             // Se obtienen passwords de las otras aplicaciones para almacenar en el mismo secret...
             string subapp01Name = System.Environment.GetEnvironmentVariable("SUBAPP_01_NAME")!;
@@ -69,10 +67,6 @@ namespace BDiazErdsPostgreSql
                 Description = $"RDS Security Group - {appName}",
                 AllowAllOutbound = true
             });
-
-            securityGroup.AddIngressRule(Peer.SecurityGroupId(lambdaSecurityGroupId), Port.POSTGRES, "Ingress para funciones Lambda");
-            securityGroup.AddIngressRule(Peer.SecurityGroupId(ec2SecurityGroupId), Port.POSTGRES, "Ingress para instancias EC2");
-
 
             ParameterGroup parameterGroup = new(this, $"{appName}ParameterGroup", new ParameterGroupProps {
                 Engine = DatabaseInstanceEngine.Postgres(new PostgresInstanceEngineProps {

@@ -25,8 +25,6 @@ jobs:
             DEFAULT_DATABASE: ${{ vars.DEFAULT_DATABASE }}
             MASTER_USERNAME: ${{ secrets.MASTER_USERNAME }}
             MASTER_PASSWORD: ${{ secrets.MASTER_PASSWORD }}
-            LAMBDA_SECURITY_GROUP_ID: ${{ vars.LAMBDA_SECURITY_GROUP_ID }}
-            EC2_SECURITY_GROUP_ID: ${{ vars.EC2_SECURITY_GROUP_ID }}
             SUBAPP_01_NAME: ${{ vars.SUBAPP_01_NAME }}
             SUBAPP_01_DATABASE: ${{ secrets.SUBAPP_01_DATABASE }}
             SUBAPP_01_ADM_USERNAME: ${{ secrets.SUBAPP_01_ADM_USERNAME }}
