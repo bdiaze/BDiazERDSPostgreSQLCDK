@@ -24,6 +24,7 @@ public class Function {
         string secretArnConnectionString = Environment.GetEnvironmentVariable("SECRET_ARN_CONNECTION_STRING") ?? throw new ArgumentNullException("SECRET_ARN_CONNECTION_STRING");
         string subapp01Name = Environment.GetEnvironmentVariable("SUBAPP_01_NAME") ?? throw new ArgumentNullException("SUBAPP_01_NAME");
         string subapp02Name = Environment.GetEnvironmentVariable("SUBAPP_02_NAME") ?? throw new ArgumentNullException("SUBAPP_02_NAME");
+        string subapp03Name = Environment.GetEnvironmentVariable("SUBAPP_03_NAME") ?? throw new ArgumentNullException("SUBAPP_03_NAME");
 
         LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Obteniendo secreto de conexion a base de datos...");
 
@@ -39,6 +40,7 @@ public class Function {
 
             conn.Open();
 
+            #region SubApp02
             // Se crea usuario administrador subapp02...
             string subapp02AdmUsername = connectionString[$"{subapp02Name}AdmUsername"];
             if (subapp02AdmUsername.Contains('"')) {
@@ -85,6 +87,56 @@ public class Function {
                 LambdaLogger.Log(mensaje);
                 retorno.Add(mensaje);
             }
+            #endregion
+
+            #region SubApp03
+            // Se crea usuario administrador subapp02...
+            string subapp03AdmUsername = connectionString[$"{subapp03Name}AdmUsername"];
+            if (subapp03AdmUsername.Contains('"')) {
+                throw new Exception($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error con el nombre de usuario administrador para subapp03 \"{subapp03Name}\" - Caracteres invalidos...");
+            }
+            string subapp03AdmPassword = connectionString[$"{subapp03Name}AdmPassword"];
+            if (subapp03AdmPassword.Contains('\'')) {
+                throw new Exception($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error con la contraseña del usuario administrador para subapp03 \"{subapp03Name}\" - Caracteres invalidos...");
+            }
+
+            LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Creando usuario administrador para subapp03 \"{subapp03Name}\"...");
+            try {
+                using NpgsqlCommand cmd = new($"CREATE USER \"{subapp03AdmUsername}\" WITH ENCRYPTED PASSWORD '{subapp03AdmPassword}' CREATEROLE", conn);
+                cmd.ExecuteNonQuery();
+            } catch (Exception ex) {
+                string mensaje = $"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error al crear usuario administrador de la subapp03: " + ex;
+                LambdaLogger.Log(mensaje);
+                retorno.Add(mensaje);
+            }
+
+            // Se otorga uso sobre el rol creado para el master user...
+            LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Otorgando uso del usuario administrador para subapp03 \"{subapp03Name}\"...");
+            try {
+                using NpgsqlCommand cmd2 = new($"GRANT \"{subapp03AdmUsername}\" TO \"{connectionString["MasterUser"]}\"", conn);
+                cmd2.ExecuteNonQuery();
+            } catch (Exception ex) {
+                string mensaje = $"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error al otorgar uso del usuario administrador de la subapp03: " + ex;
+                LambdaLogger.Log(mensaje);
+                retorno.Add(mensaje);
+            }
+
+            // Se crea database subapp02...
+            string subapp03Database = connectionString[$"{subapp03Name}Database"];
+            if (subapp03Database.Contains('"')) {
+                throw new Exception($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error con el nombre de la base de datos para subapp03 \"{subapp03Name}\" - Caracteres invalidos...");
+            }
+
+            LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Creando base de datos para subapp03 \"{subapp03Name}\" - [Base de Datos: {subapp03Database}]...");
+            try {
+                using NpgsqlCommand cmd = new($"CREATE DATABASE \"{subapp03Database}\" WITH OWNER \"{subapp03AdmUsername}\"", conn);
+                cmd.ExecuteNonQuery();
+            } catch (Exception ex) {
+                string mensaje = $"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Error al crear base de datos de la subapp03: " + ex;
+                LambdaLogger.Log(mensaje);
+                retorno.Add(mensaje);
+            }
+            #endregion
         }
 
         LambdaLogger.Log($"[Elapsed Time: {sw.ElapsedMilliseconds} ms] - Ha terminado el proceso de creacion inicial de la base de datos y sus usuarios administradores...");
