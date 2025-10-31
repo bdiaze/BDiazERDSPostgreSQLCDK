@@ -105,6 +105,7 @@ namespace BDiazErdsPostgreSql
                 CloudwatchLogsExports = ["postgresql"],
                 CloudwatchLogsRetention = RetentionDays.ONE_MONTH,
                 RemovalPolicy = RemovalPolicy.RETAIN,
+                DeletionProtection = true
             });
 
             // Se crea parámetro con información de conexión a la base de datos...
