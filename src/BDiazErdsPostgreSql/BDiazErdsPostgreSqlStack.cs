@@ -39,6 +39,13 @@ namespace BDiazErdsPostgreSql
             string subapp02AppUsername = System.Environment.GetEnvironmentVariable("SUBAPP_02_APP_USERNAME")!;
             string subapp02AppPassword = System.Environment.GetEnvironmentVariable("SUBAPP_02_APP_PASSWORD")!;
 
+            string subapp03Name = System.Environment.GetEnvironmentVariable("SUBAPP_03_NAME") ?? throw new ArgumentException("SUBAPP_03_NAME");
+            string subapp03Database = System.Environment.GetEnvironmentVariable("SUBAPP_03_DATABASE") ?? throw new ArgumentException("SUBAPP_03_DATABASE");
+            string subapp03AdmUsername = System.Environment.GetEnvironmentVariable("SUBAPP_03_ADM_USERNAME") ?? throw new ArgumentException("SUBAPP_03_ADM_USERNAME");
+            string subapp03AdmPassword = System.Environment.GetEnvironmentVariable("SUBAPP_03_ADM_PASSWORD") ?? throw new ArgumentException("SUBAPP_03_ADM_PASSWORD");
+            string subapp03AppUsername = System.Environment.GetEnvironmentVariable("SUBAPP_03_APP_USERNAME") ?? throw new ArgumentException("SUBAPP_03_APP_USERNAME");
+            string subapp03AppPassword = System.Environment.GetEnvironmentVariable("SUBAPP_03_APP_PASSWORD") ?? throw new ArgumentException("SUBAPP_03_APP_PASSWORD");
+
             // Se obtienen variables de entorno para la creación de la lambda de ejecución inicial...
             string privateWithInternetId1 = System.Environment.GetEnvironmentVariable("PRIVATE_WITH_INTERNET_ID_1")!;
             string privateWithInternetId2 = System.Environment.GetEnvironmentVariable("PRIVATE_WITH_INTERNET_ID_2")!;
@@ -129,6 +136,11 @@ namespace BDiazErdsPostgreSql
                     { $"{subapp02Name}AdmPassword", SecretValue.UnsafePlainText(subapp02AdmPassword) },
                     { $"{subapp02Name}AppUsername", SecretValue.UnsafePlainText(subapp02AppUsername) },
                     { $"{subapp02Name}AppPassword", SecretValue.UnsafePlainText(subapp02AppPassword) },
+                    { $"{subapp03Name}Database", SecretValue.UnsafePlainText(subapp03Database) },
+                    { $"{subapp03Name}AdmUsername", SecretValue.UnsafePlainText(subapp03AdmUsername) },
+                    { $"{subapp03Name}AdmPassword", SecretValue.UnsafePlainText(subapp03AdmPassword) },
+                    { $"{subapp03Name}AppUsername", SecretValue.UnsafePlainText(subapp03AppUsername) },
+                    { $"{subapp03Name}AppPassword", SecretValue.UnsafePlainText(subapp03AppPassword) },
                 },
             });
 
@@ -196,6 +208,7 @@ namespace BDiazErdsPostgreSql
                     { "SECRET_ARN_CONNECTION_STRING", secret.SecretFullArn },
                     { "SUBAPP_01_NAME", subapp01Name },
                     { "SUBAPP_02_NAME", subapp02Name },
+                    { "SUBAPP_03_NAME", subapp03Name },
                 },
                 Vpc = vpc,
                 VpcSubnets = new SubnetSelection {
