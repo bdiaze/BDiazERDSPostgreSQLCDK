@@ -93,7 +93,7 @@ namespace BDiazErdsPostgreSql
             DatabaseInstance instance = new(this, $"{appName}DatabaseInstance", new DatabaseInstanceProps {
                 InstanceIdentifier = $"{appName}PostgreSQLInstance",
                 Engine = DatabaseInstanceEngine.Postgres(new PostgresInstanceEngineProps {
-                    Version = PostgresEngineVersion.VER_17_2
+                    Version = PostgresEngineVersion.VER_17_8
                 }),
                 ParameterGroup = parameterGroup,
                 Credentials = Credentials.FromPassword(masterUsername, SecretValue.UnsafePlainText(masterPassword)),
