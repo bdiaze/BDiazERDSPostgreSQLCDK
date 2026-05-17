@@ -196,7 +196,7 @@ namespace BDiazErdsPostgreSql
             ISubnet privateWithInternet1 = Subnet.FromSubnetId(this, $"{appName}PrivateSubnetWithInternet1", privateWithInternetId1);
             ISubnet privateWithInternet2 = Subnet.FromSubnetId(this, $"{appName}PrivateSubnetWithInternet2", privateWithInternetId2);
             Function function = new(this, $"{appName}InitialCreationLambda", new FunctionProps {
-                Runtime = Runtime.DOTNET_8,
+                Runtime = Runtime.DOTNET_10,
                 Handler = initialCreationHandler,
                 Code = Code.FromAsset(initialCreationPublishZip),
                 FunctionName = $"{appName}RDSPostgreSQLInitialCreationLambda",
